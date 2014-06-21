@@ -1,0 +1,126 @@
+%% !TeX TS-program = XeLaTeX
+\documentclass[a4paper,12pt]{report}
+
+% polyglossia should go first!
+\usepackage{polyglossia} % multi-language support
+\setmainlanguage{russian}
+\setotherlanguage{english}
+
+\usepackage{amsmath} % math symbols, new environments and stuff
+\usepackage{mathtools} % some fancies, for instance, dcases
+\usepackage{unicode-math} % for changing math font and unicode symbols
+\usepackage[style=english]{csquotes} % fancy quoting
+\usepackage{microtype} % for better font rendering
+\usepackage[backend=biber]{biblatex} % for bibliography
+\usepackage{hyperref} % for refs and URLs
+\usepackage{graphicx} % for images (and title page)
+\usepackage{geometry} % for margins in title page
+\usepackage{tabu} % for tabulars (and title page)
+\usepackage{multirow} % for multirow cells in tabulars
+\usepackage{placeins} % for float barriers
+\usepackage{titlesec} % for section break hooks
+%\usepackage[justification=centering]{caption} % for forced captions centering
+%\usepackage{subcaption} % for subfloats
+%\usepackage{rotating} % for rotated labels in tables
+%\usepackage{tikz} % for TiKZ
+%\usepackage{dot2texi} % for inline dot graphs
+%\usepackage{listings} % for listings 
+%\usepackage{upquote} % for good-looking quotes in source code (used for custom languages)
+%\usepackage{afterpage} % for nice landspace floats and longtabus
+%\usepackage{pdflscape} % for landspace orientation
+%\usepackage{xcolor} % colors!
+%\usepackage{enumitem} % for unboxed description labels (long ones)
+%\usepackage{numprint} % pretty-printing numbers
+\usepackage{longtable} % for longtabu
+
+\defaultfontfeatures{Mapping=tex-text} % for converting "--" and "---"
+\setmainfont{CMU Serif}
+\setsansfont{CMU Sans Serif}
+\setmonofont{CMU Typewriter Text}
+\setmathfont{XITS Math}
+\DeclareSymbolFont{letters}{\encodingdefault}{\rmdefault}{m}{it} % for Russian in math
+%\MakeOuterQuote{"} % enable auto-quotation
+
+% new page and barrier after section, also phantom section after clearpage for
+% hyperref to get right page.
+% clearpage also outputs all active floats:
+%\newcommand{\sectionbreak}{\FloatBarrier\newpage\phantomsection}
+%\newcommand{\subsectionbreak}{\FloatBarrier}
+\renewcommand{\thesection}{\arabic{section}} % no chapters
+\numberwithin{equation}{section}
+\renewcommand{\figurename}{Рисунок} % Russian standards
+%\usetikzlibrary{shapes,arrows,trees}
+
+%\lstset{
+%  numbers=left,
+%  numberstyle=\scriptsize,
+%  basicstyle=\ttfamily\scriptsize,
+%  columns=fullflexible,
+%  keepspaces, % for spaces in unicode text!
+%  captionpos=t % Russian standards, again
+%}
+%\renewcommand{\lstlistingname}{Листинг}
+
+\newcommand{\un}[1]{\: \mathit{#1}} % Unit measurements
+
+\title{Диплом}
+\author{Амиантов Н.И., ИУ7-82}
+\date{\today}
+
+\makeatletter
+\let\thetitle\@title
+\let\theauthor\@author
+\let\thedate\@date
+\makeatother
+
+\begin{document}
+
+\newgeometry{margin=1cm}
+\begin{titlepage}
+  \begin{center}
+    \emph{Федеральное государственное бюджетное образовательное учреждение высшего
+      профессионального образования}
+    \begin{tabu} to \linewidth {lX[1,c,m]}
+      \hline
+      \includegraphics[width=0.15\linewidth]{img/crest} &
+      \large\emph{``Московский государственный технический университет имени Н.Э.
+        Баумана'' (МГТУ им. Н.Э. Баумана)} \\
+    \end{tabu}
+  \end{center}
+  \begin{tabu}{ll}
+    \large\textsc{Факультет:} & Информатика и системы управления \\
+    \large\textsc{Кафедра:} & Программное обеспечение ЭВМ и информационные технологии \\
+  \end{tabu}
+  \vspace{1.0cm}
+  \begin{center}
+    \huge{Типовой расчёт по дисциплине ``Организация и планирование производства''} \\
+    \vspace{0.5cm}
+    \Large{на тему:} \\
+    \vspace{0.3cm}
+    \Large{``\thetitle''} \\
+    \vspace{0.2cm}
+    \Large{Вариант 2}
+  \end{center}
+  \vfill
+  Автор: \theauthor
+  \vspace{0.2cm}
+  \begin{center}
+    Москва \the\year
+  \end{center}
+\end{titlepage}
+\restoregeometry
+
+\section{Анализ вредных и опасных факторов}
+
+\subsection{Микроклимат}
+
+Оптимальные нормы микроклимата для рабочего помещения программистов определены в таблице~\ref{tab:ws:climate} в соотетствии с СанПиН 2.2.2/2.4.1340-03.
+
+\begin{table}
+  \centering
+  \begin{tabu} {|l|X|X|X|} \hline
+    & Температура воздуха, С & Относительная влажность воздуха, \% & Скорость движения воздуха, м/с \\ \hline
+    Холодный & 22-24 & 40-60 & 0.1 \\ \hline
+    Тёплый & 23-25 & 40-60 & 0.1 \\ \hline
+
+\end{document}

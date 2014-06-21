@@ -1,0 +1,235 @@
+% !TeX TS-program = XeLaTeX
+\documentclass[a4paper,12pt]{article}
+
+% polyglossia should go first!
+\usepackage{polyglossia} % multi-language support
+\setmainlanguage{russian}
+\setotherlanguage{english}
+
+\usepackage{amsmath} % math symbols, new environments and stuff
+\usepackage{unicode-math} % for changing math font and unicode symbols
+\usepackage[style=english]{csquotes} % fancy quoting
+\usepackage{microtype} % for better font rendering
+\usepackage[backend=biber]{biblatex} % for bibliography
+\usepackage{hyperref} % for refs and URLs
+\usepackage{graphicx} % for images (and title page)
+\usepackage{geometry} % for margins in title page
+\usepackage{tabu} % for tabulars (and title page)
+\usepackage{placeins} % for float barriers
+\usepackage{titlesec} % for section break hooks
+%\usepackage[justification=centering]{caption} % for forced captions centering
+%\usepackage{subcaption} % for subfloats
+%\usepackage{rotating} % for rotated labels in tables
+%\usepackage{tikz} % for TiKZ
+%\usepackage{dot2texi} % for inline dot graphs
+\usepackage{listings} % for listings 
+\usepackage{algpseudocode} % for good-looking pseudo-code
+%\usepackage{upquote} % for good-looking quotes in source code (used for custom languages)
+%\usepackage{multirow} % for multirow cells in tabulars
+%\usepackage{afterpage} % for nice landspace floats and longtabus
+%\usepackage{pdflscape} % for landspace orientation
+%\usepackage{xcolor} % colors!
+%\usepackage{enumitem} % for unboxed description labels (long ones)
+%\usepackage{numprint} % pretty-printing numbers
+%\usepackage{longtable} % for longtabu
+
+\defaultfontfeatures{Mapping=tex-text} % for converting "--" and "---"
+\setmainfont{CMU Serif}
+\setsansfont{CMU Sans Serif}
+\setmonofont{CMU Typewriter Text}
+\setmathfont{XITS Math}
+\DeclareSymbolFont{letters}{\encodingdefault}{\rmdefault}{m}{it} % for Russian in math
+%\MakeOuterQuote{"} % enable auto-quotation
+
+% new page and barrier after section, also phantom section after clearpage for
+% hyperref to get right page.
+% clearpage also outputs all active floats:
+%\newcommand{\sectionbreak}{\FloatBarrier\newpage\phantomsection}
+%\newcommand{\subsectionbreak}{\FloatBarrier}
+\renewcommand{\thesection}{\arabic{section}} % no chapters
+\numberwithin{equation}{section}
+\renewcommand{\figurename}{Рисунок} % Russian standards
+%\usetikzlibrary{shapes,arrows,trees}
+
+\lstset{
+  numbers=left,
+  numberstyle=\scriptsize,
+  basicstyle=\ttfamily\scriptsize,
+  columns=fullflexible,
+  keepspaces, % for spaces in unicode text!
+  captionpos=t % Russian standards, again
+}
+\renewcommand{\lstlistingname}{Листинг}
+
+% don't ask. please. just don't
+\algrenewcommand{\algorithmicrequire}{\textbf{Ввод:}}
+\algrenewcommand{\algorithmicensure}{\textbf{Вывод:}}
+\algrenewcommand{\algorithmicif}{\textbf{если}}
+\algrenewcommand{\algorithmicthen}{\textbf{то}}
+\algrenewcommand{\algorithmicelse}{\textbf{иначе}}
+\algrenewcommand{\algorithmicfor}{\textbf{по}}
+\algrenewcommand{\algorithmicforall}{\textbf{по всем}}
+\algrenewcommand{\algorithmicdo}{\textbf{повторять}}
+\algrenewcommand{\algorithmicwhile}{\textbf{пока}}
+\algrenewcommand{\algorithmicloop}{\textbf{повторять}}
+\algrenewcommand{\algorithmicrepeat}{\textbf{повторять}}
+\algrenewcommand{\algorithmicuntil}{\textbf{пока не}}
+\algrenewcommand{\algorithmicreturn}{\textbf{вернуть}}
+\algtext*{EndWhile}
+\algtext*{EndFor}
+\algtext*{EndLoop}
+\algtext*{EndIf}
+\algtext*{EndProcedure}
+\algtext*{EndFunction}
+
+\newcommand{\un}[1]{\: \mathit{#1}} % Unit measurements
+
+\title{Анализ вредных и опасных факторов}
+\author{Амиантов Н.И., ИУ7-82}
+\date{\today}
+
+\makeatletter
+\let\thetitle\@title
+\let\theauthor\@author
+\let\thedate\@date
+\makeatother
+
+\begin{document}
+
+\section{Анализ вредных и опасных факторов}
+
+\subsection{Микроклимат}
+
+
+\section{Постановка задачи}
+
+Для начала опишем задачу о назначениях.
+
+\subsection{Содержательная постановка}
+В распоряжении работодателя имеется $n$ работ и $n$ исполнителей. Стоимость выполнения $i$-ой работы $j$-ым исполнителем составляет $C_{ij}$ единиц. Требуется распределить работы между исполнителями так, чтобы:
+\begin{itemize}
+\item Каждый исполнитель выполнял ровно одну работу;
+\item Общая стоимость выполнения работ была минимальна.
+\end{itemize}
+
+\subsection{Математическая постановка}
+
+Зададим матрицу $X$ размером $n*n$, заполненную по правилу:
+
+\[
+X_{ij} = \begin{cases}
+  1 \text{ -- \textit{если $i$-ая работа выполняется $j$-ым исполнителем,}} \\
+  0 \text{ -- \textit{иначе}} \\
+\end{cases}
+\]
+
+Тогда общая стоимость выполненных работ:
+
+\[ f = \sum_{i=1}^n \sum_{j=1}^n C_{ij} X_{ij} \]
+
+Добавим условия: условие того, что $i$-ую работу выполняет один исполнитель:
+
+\[ \sum_{j=1}^n X_{ij} = 1, i=\overline{1:n} \]
+
+Условие того, что $j$-ый сотрудник выполняет одну работу:
+
+\[ \sum_{i=1}^n X_{ij} = 1, j=\overline{1:n} \]
+
+Решим задачу нахождения максимума функции $f$. Решаемая задача:
+
+\[
+\begin{cases}
+  f = \sum_{i=1}^n \sum_{j=1}^n C_{ij} X_{ij} \rightarrow max \\
+  \sum_{j=1}^n X_{ij} = 1, i=\overline{1:n} \\
+  \sum_{i=1}^n X_{ij} = 1, j=\overline{1:n} \\
+  X_{ij} \in {0, 1}
+\end{cases}
+\]
+
+В случае нахождения минимума функции задача приводится к задаче нахождения максимума:
+
+\begin{align*}
+  g &= -f = \sum_{i=1}^n \sum_{j=1}^n C_{ij} X_{ij} \rightarrow min \\
+  f &= -\sum_{i=1}^n \sum_{j=1}^n C_{ij} X_{ij} \rightarrow max
+\end{align*}
+
+Для решения подобной задачи подходит венгерский метод.
+
+\section{Описание метода}
+
+Даётся описание алгоритма в псевдокодах:
+
+\begin{algorithmic}
+  \Require $M$ -- матрица размером $n*n$, описывающая стоимости операций.
+  \Ensure назначения
+
+  \Comment{Первый этап}
+  \ForAll{столбцам $M$} \\ 
+    вычесть $a$ -- минимальный из столбца
+  \EndFor
+  \ForAll{строкам $M$}
+    вычесть $b$ -- минимальный из строки
+  \EndFor
+  
+  \Comment{Основной цикл}
+  \While{процесс не завершён}
+    \ForAll{$0 \in M$}
+      \If{в строке с ним $\not\exists \: 0^*$}
+        пометить как $0^*$
+      \EndIf
+    \EndFor
+    \If{$n_{0'} = n$}
+      \Return набор пар $(i, j): M_{ij} = 0'$
+    \EndIf
+    \ForAll{столбцам из $M: \subset 0'$}
+      выделить столбцы
+    \EndFor
+    \If{$\not\exists 0$ в выделенных}
+      найти $m$ -- минимальный из выделенных
+      \ForAll{невыделенным столбцам}
+        вычесть $m$
+      \EndFor
+      \ForAll{выделенным строкам}
+        прибавить $m$
+      \EndFor
+    \EndIf
+    \If{$\exists 0$ в выделенных}
+      пометить как $0'$
+      \If{в одной строке с ним есть $0^*$}
+        снять выделение со столбца с $0'$, выделить эту строку
+      \EndIf
+      построить L-цепочку
+      $0^* \rightarrow 0', 0' \rightarrow 0^*$
+      снять все выделения
+    \EndIf
+  \EndWhile
+\end{algorithmic}
+
+\section{Текст программы}
+
+\lstinputlisting[language=Haskell]{../Main.hs}
+
+\section{Индивидуальное задание}
+
+Задание для данного варианта:
+
+\[ \left[
+\begin{matrix}
+  4 & 10 & 10 & 3 & 6 \\
+  5 & 6 & 2 & 7 & 4 \\
+  9 & 5 & 6 & 8 & 3 \\
+  2 & 3 & 5 & 4 & 8 \\
+  8 & 5 & 4 & 9 & 3 \\
+\end{matrix}
+\right] \]
+
+Для данного результата результаты работы следующие:
+
+\begin{lstlisting}[language=Haskell]
+> fst $ maximize test
+[(1,3),(2,2),(3,1),(4,5),(5,4)]
+> fst $ minimize test
+[(1,4),(2,3),(3,5),(4,1),(5,2)]
+\end{lstlisting}
+
+\end{document}
