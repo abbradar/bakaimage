@@ -17,34 +17,16 @@ import Test.QuickCheck (Property, Gen,
                         forAll, choose, listOf,
                         arbitrary, quickCheckAll)
 
-data PutBuf a = PutBuf !Word8 !Int a
+data BitBuf = BitBuf !Word8 !Int
 
-newtype PutBit a = PutBit { unPutBit :: PutM (PutBuf a) }
+newtype PutBit a = PutBit { unPutBit :: BitBuf -> PutM (BitBuf, a) }
 
 instance Monad PutBit where
-  return a = PutBit $ return $ PutBuf 0 0 a
-
-  a >>= b = PutBit $ do
-    (PutBuf pb1 ps1 r1) <- unPutBit a
-    if ps1 == 0
-      then unPutBit $ b r1
-      else do
-        let (PutBuf pb2 ps2 r2, bs) = runPutM $ unPutBit $ b r1
-            sz = finiteBitSize pb1
-        ps' <- foldM (pushWord ps1) pb1 $ BL.unpack bs
-        let p''@(pb'', ps'') = (ps' .|. (pb2 `shiftL` ps1), ps1 + ps2)
-        (pbr, psr) <- if ps'' < sz
-                      then return p''
-                      else do
-                        putWord8 pb''
-                        return (pb2 `shiftR` (sz - ps1), ps'' - sz)
-        return $ PutBuf pbr psr r2
-    
-    where pushWord ps pb w = do
-            putWord8 $ pb .|. (w `shiftL` ps)
-            return $ w `shiftR` (finiteBitSize pb - ps)
-
-  fail = PutBit . fail
+  return a = PutBit $ return . (, a)
+  a >>= b = PutBit $ \p -> do
+    (p', r) <- unPutBit a p
+    unPutBit (b r) p'
+  fail = PutBit . const . fail
 
 instance Applicative PutBit where
   pure = return
@@ -55,41 +37,60 @@ instance Functor PutBit where
 
 putBitWord8 :: Int -> Word8 -> PutBit ()
 putBitWord8 i w
-  | i < sz = PutBit $ return $ PutBuf w i ()
-  | i == sz = PutBit $ putWord8 w >> return (PutBuf 0 0 ())
+  | i <= sz = PutBit $ \(BitBuf b s) -> do
+    let (b1, s1) = (b .|. (w `shiftL` s), s + i)
+    if s1 < 8
+      then return $ (BitBuf b1 s1, ())
+      else do
+        putWord8 b1
+        return (BitBuf (w `shiftR` (sz - s)) (s1 - sz), ())
   | otherwise = fail $ "putBitWord8: bit number should be <= " ++ show sz
 
   where sz = finiteBitSize w
 
-flushPut :: PutBit a -> PutBit a
-flushPut a = PutBit $ do
-  (PutBuf pb s r) <- unPutBit a
-  when (s /= 0) $ putWord8 pb
-  return (PutBuf 0 0 r)
+flushPut :: PutBit ()
+flushPut = PutBit $ \(BitBuf b s) -> do
+  when (s /= 0) $ putWord8 b
+  return (BitBuf 0 0, ())
 
 runPutBit :: PutBit a -> PutM a
 runPutBit a = do
-  (PutBuf _ _ r) <- unPutBit $ flushPut a
+  (_, _, r) <- runPutBit' $ do
+    r <- a
+    flushPut
+    return r
   return r
 
 runPutBit' :: PutBit a -> PutM (Word8, Int, a)
 runPutBit' a = do
-  (PutBuf b s r) <- unPutBit a
+  (BitBuf b s, r) <- unPutBit a $ BitBuf 0 0
   return (b, s, r)
 
 liftPut :: PutM a -> PutBit a
-liftPut a = PutBit $ a >>= return . (PutBuf 0 0)
+liftPut a = PutBit $ \res@(BitBuf b s) -> do
+  if s == 0
+    then do
+      r <- a
+      return (res, r)
+    else do
+      let (r, bs) = runPutM a
+      b' <- foldM (pushWord s) b $ BL.unpack bs
+      return (BitBuf b' s, r)
 
-newtype GetBit a = GetBit { unGetBit :: Word8 -> Int -> Get (Word8, Int, a) }
+  where pushWord ps pb w = do
+          putWord8 $ pb .|. (w `shiftL` ps)
+          return $ w `shiftR` (finiteBitSize pb - ps)
+
+newtype GetBit a = GetBit { unGetBit :: BitBuf -> Get (BitBuf, a) }
 
 instance Monad GetBit where
-  return a = GetBit $ \w s -> return (w, s, a)
+  return a = GetBit $ \p -> return (p, a)
 
-  a >>= b = GetBit $ \w s -> do
-    (w1, s1, r) <- unGetBit a w s
-    unGetBit (b r) w1 s1
+  a >>= b = GetBit $ \p -> do
+    (p', r) <- unGetBit a p
+    unGetBit (b r) p'
 
-  fail e = GetBit $ \_ _ -> fail e
+  fail = GetBit . const . fail
 
 instance Applicative GetBit where
   pure = return
@@ -100,18 +101,18 @@ instance Functor GetBit where
 
 getBitWord8 :: Int -> GetBit Word8
 getBitWord8 n
-  | n <= sz = GetBit $ \w s -> do
+  | n <= sz = GetBit $ \(BitBuf w s) -> do
     let nt = min n s
         r' = maskBits nt w
     if n <= s
-      then return (w `shiftR` n, s - n, r')
+      then return (BitBuf (w `shiftR` n) (s - n), r')
       else do
         w' <- getWord8
         let n' = n - s
-        return (w' `shiftR` n', sz - n',
+        return (BitBuf (w' `shiftR` n') (sz - n'),
                 r' .|. maskBits n (w' `shiftL` s))
-
   | otherwise = fail $ "getBitWord8: bit number should be <= " ++ show sz
+
   where maskBits n' w = w `shiftL` ni `shiftR` ni
           where ni = sz - n'
         sz = finiteBitSize (undefined :: Word8)
@@ -122,13 +123,15 @@ runGetBit a = do
   return r
 
 runGetBit' :: GetBit a -> Get (Word8, Int, a)
-runGetBit' a = unGetBit a 0 0
+runGetBit' a = do
+  (BitBuf b s, r) <- unGetBit a $ BitBuf 0 0
+  return (b, s, r)
 
 flushGet :: GetBit ()
-flushGet = GetBit $ \_ _ -> return (0, 0, ())
+flushGet = GetBit $ const $ return (BitBuf 0 0, ())
 
 liftGet :: Get a -> GetBit a
-liftGet a = flushGet >> GetBit (\_ _ -> a >>= return . (0, 0,))
+liftGet a = GetBit $ const $ a >>= return . (BitBuf 0 0, )
 
 testBits :: Gen [(Int, Word8)]
 testBits = listOf $ do

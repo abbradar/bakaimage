@@ -25,9 +25,9 @@ library
                        Codec.Image.BakaImage.Encoding,
                        Codec.Image.BakaImage.Packing,
                        Codec.Image.BakaImage.Decoding,
+                       Codec.Image.BakaImage.Statistics,
                        Codec.Image.BakaImage.DevIL,
                        Codec.Image.BakaImage.Blocks,
-                       Codec.Image.BakaImage.Size,
                        Codec.Image.BakaImage.Serialize,
                        Data.Binary.Bit
   -- other-modules:       
@@ -36,23 +36,31 @@ library
                        repa,
                        repa-devil,
                        transformers,
-                       parallel,
+                       containers,
                        binary,
                        vector,
                        bytestring,
-                       QuickCheck
+                       QuickCheck,
+                       conduit,
+                       binary-conduit,
+                       lzma-conduit,
+                       resourcet
   default-language:    Haskell2010
-  ghc-options:         -fprof-auto
+  ghc-options:         -fllvm -optlo-O3 -Odph -fprof-auto
 
 executable bakaimage
   main-is:             Main.hs
   hs-source-dirs:      utils
   build-depends:       base,
                        bakaimage,
-                       repa-devil,
-                       transformers,
                        repa,
-                       bytestring
+                       repa-devil,
+                       vector,
+                       transformers,
+                       cmdlib,
+                       conduit,
+                       conduit-extra,
+                       resourcet
   default-language:    Haskell2010
  
 test-suite bakaimage-testsuite

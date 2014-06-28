@@ -9,8 +9,9 @@ import Data.Array.Repa (Array, DIM2)
 import qualified Data.Array.Repa.Repr.Vector as RV
 import GHC.Generics (Generic)
 
-import Codec.Image.BakaImage.Size
 import Graphics.Process.Types
+
+type Size = DIM2
 
 data ChannelType = Y | Cb | Cr
              deriving (Show, Eq, Generic)

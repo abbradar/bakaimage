@@ -13,7 +13,6 @@ import qualified Data.Array.Repa as R
 import Math
 import Graphics.Process.Types
 import Codec.Image.BakaImage.Format
-import Codec.Image.BakaImage.Size
 import Codec.Image.BakaImage.Packing
 import Codec.Image.BakaImage.Decoding
 
@@ -23,7 +22,7 @@ noDither _ = id
 {- Error diffusion dithering based on "Color quantization using octrees" paper -}
 ditherED :: Image R.D -> Channel -> Channel
 ditherED img eimg = runST $ do
-  let lvl = RV.computeVectorS $ R.map (map fromIntegral . fst) $ flattenChannel (fromIx2 sz) eimg
+  let lvl = RV.computeVectorS $ R.map (map fromIntegral . fst) $ flattenChannel sz eimg
       v = RU.toUnboxed $ RU.computeUnboxedS $ R.map fromIntegral img
   mv <- VU.unsafeThaw v
   nv <- VM.new $ w * h

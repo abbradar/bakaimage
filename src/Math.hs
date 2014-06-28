@@ -1,3 +1,5 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Math where
 
 import Data.List (minimumBy)
@@ -11,9 +13,6 @@ mid x = sum x / fromIntegral (length x)
 midD :: (Num a, Integral a) => [a] -> a
 midD [] = error "midD: empty list"
 midD x = sum x `div` fromIntegral (length x)
-
-midD' :: (Num a, Integral a) => [a] -> a
-midD' a = fromIntegral (midD $ map fromIntegral a :: Int)
 
 quantize :: (Enum a, Ord a, Num a, Num b, Enum b) => [a] -> a -> (b, a)
 quantize cl p = minimumBy (comparing $ dist p . snd) $ zip [0..] cl
@@ -39,3 +38,6 @@ between low high a = a >= low && a <= high
 numBitSize :: (Bits a, Num a) => a -> Int
 numBitSize 0 = 0
 numBitSize n = succ $ numBitSize $ n `shiftR` 1
+
+truncTrim :: forall a b. (Ord a, Num a, RealFrac a, Integral b, Bounded b) => a -> b
+truncTrim = truncate . trimRange (fromIntegral (minBound :: b)) (fromIntegral (maxBound :: b))

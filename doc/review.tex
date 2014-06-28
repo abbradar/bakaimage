@@ -1,0 +1,104 @@
+% !TeX TS-program = XeLaTeX
+% check for outdated packages, syntax etc.
+\RequirePackage[l2tabu,orthodox]{nag}
+
+\documentclass[a4paper,12pt]{article}
+
+% polyglossia should go first!
+\usepackage{polyglossia} % multi-language support
+ 
+\usepackage{amsmath} % math symbols, new environments and stuff
+\usepackage{unicode-math} % for changing math font and unicode symbols
+\usepackage[style=english]{csquotes} % fancy quoting
+\usepackage{microtype} % for better font rendering
+\usepackage[backend=biber]{biblatex} % for bibliography
+\usepackage{hyperref} % for refs and URLs
+\usepackage{graphicx} % for images (and title page)
+\usepackage{geometry} % for margins in title page
+\usepackage{tabu} % for tabulars (and title page)
+\usepackage{placeins} % for float barriers
+\usepackage{titlesec} % for section break hooks
+% \usepackage{cleveref} % ref auto-naming (doesn't support polyglossia)
+%\usepackage[justification=centering]{caption} % for forced captions centering
+%\usepackage{subcaption} % for subfloats
+%\usepackage{rotating} % for rotated labels in tables
+%\usepackage{tikz} % for TiKZ
+%\usepackage{dot2texi} % for inline dot graphs
+%\usepackage{listings} % for listings 
+%\usepackage{upquote} % for good-looking quotes in source code (used for custom languages)
+%\usepackage{multirow} % for multirow cells in tabulars
+%\usepackage{afterpage} % for nice landspace floats and longtabus
+%\usepackage{pdflscape} % for landspace orientation
+%\usepackage{xcolor} % colors!
+%\usepackage{enumitem} % for unboxed description labels (long ones)
+%\usepackage{numprint} % pretty-printing numbers
+%\usepackage{longtable} % for longtabu
+
+\setmainlanguage{russian}
+\setotherlanguage{english}
+\defaultfontfeatures{Mapping=tex-text} % for converting "--" and "---"
+\setmainfont{CMU Serif}
+\setsansfont{CMU Sans Serif}
+\setmonofont{CMU Typewriter Text}
+\setmathfont{XITS Math}
+\DeclareSymbolFont{letters}{\encodingdefault}{\rmdefault}{m}{it} % for Russian in math
+%\MakeOuterQuote{"} % enable auto-quotation
+
+%\newcommand{\un}[1]{\: \mathit{#1}} % Unit measurements
+
+\makeatletter
+\let\thetitle\@title
+\let\theauthor\@author
+\let\thedate\@date
+\makeatother
+
+\addglobalbib{summary.bib}
+
+\title{Диплом}
+\author{Амиантов Н.И., ИУ7-82}
+\date{\today}
+
+\begin{document}
+\pagenumbering{gobble}
+
+\begin{center}
+{\Large Рецензия} \\
+на квалификационную работу на степень бакалавра по специальности \\
+``Программное обеспечение ЭВМ и информационные технологии'' \\
+бакалавра группы ИУ7-82 МГТУ им. Н. Э. Баумана \\
+Амиантова Николая Ильича на тему \\
+``Разработка алгоритма сжатия изображений, формата для хранения и сопутствующих утилит''
+\end{center}
+
+Рецензируемая бакалаврская квалификационная работа посвящена разработке формата
+хранения изображений, алгоритмов сжатия изображений с потерями с преобразованием
+их в разработанный формат и разработке сопутствующей утилиты для упаковки и
+распаковки. Сжатие изображений является важной областью, инновации в которой
+востребованы в настоящее время в связи с возрастающими объёмами данных для
+хранения. При разработке нового алгоритма было проведено глубокое изучение
+предметной области, проанализированы известные алгоритмы, форматы, их
+возможности, достоинства и недостатки. Пояснительная записка к бакалаврской
+квалификационной работе состоит ил технического задания, календарного плана,
+введения, четырёх основных частей, заключения, списка литературы.  В
+аналитической части произведена постановка задачи, выполнен анализ предметной
+области и изучение известных алгоритмов и форматов хранения изображений. В
+конструкторской части приведено описание формата хранения изображений и общих
+частей алгоритма сжатия, а также описание алгоритма распаковки. В
+технологической части приведены обоснование выбранных средств и технологий
+разработки, диаграммы классов, требования к архитектуре и описание процесса
+тестирования разработанного программного комплекса. В исследовательской части
+проводится поиск и сравнение подходящих собственных алгоритмов для основных
+частей алгоритма сжатия, сравниваются различные подходы к обработке изображения
+и делаются выводы об оптимальных параметрах сжатия. К недостаткам
+квалификационной работы можно отнести отсутствие исследования алгоритмической
+структуры предложенных методов, однако данный недостаток не снижает ценности
+дипломной работы. Объём работ выполнен согласно техническому заданию и полностью
+удовлетворяет квалификационным требованиям, предъявляемым к выпускным
+бакалаврским работам. Работа заслуживает оценки ``отлично'', а её автор, Амиантов
+Николай Ильич, -– присвоения степени бакалавра по специальности 230100.
+
+\vfill
+
+Доцент кафедры ИУ6, к.т.н. \hfill /Попов А.Ю./
+
+\end{document}
